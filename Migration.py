@@ -11,13 +11,17 @@ query_origem = "SELECT * FROM tabela_migrada"
 
 df = pd.read_sql(query_origem, engine)
 df.to_json('dados_origem.json', index=False)
+logging.info("Dados lidos e convertidos.")
 
 df.dropna(inplace=True)
 df.drop_duplicates(inplace=True)
+logging.info("Retirada de duplicatas e nulos.")
 
 engine_destino = create_engine('dialect+driver://username:password@host:port/database')
+logging.info("Conexão com o banco a ser migrado..")
 
 df.to_sql('usuario', engine_destino, if_exists='append',index=False)
+logging.info("Dados migrados.")
 
 query_contagem = "SELECT COUNT(*) FROM tabela_migrada"
 df_contagem = pd.read_sql(query_contagem, engine_destino)
